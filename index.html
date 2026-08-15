@@ -308,6 +308,134 @@
     100%{transform:translateY(-100vh) translateX(var(--drift,0px)) rotate(20deg);opacity:0;}
   }
 
+  /* CHAT DE TERROR */
+  #chat-terror{text-align:center;}
+  #chat-terror h2{
+    font-family:'Cormorant Garamond',serif;
+    font-weight:500;
+    font-size:clamp(26px,4vw,34px);
+    margin-bottom:12px;
+  }
+  #chat-terror .lead{
+    color:var(--bone-dim);
+    max-width:420px;
+    margin:0 auto 36px;
+    line-height:1.7;
+    font-size:15px;
+  }
+
+  .chat-wrap{
+    background:var(--void-2);
+    border:1px solid var(--violet);
+    border-radius:6px;
+    max-width:420px;
+    margin:0 auto;
+    text-align:left;
+    overflow:hidden;
+  }
+  .chat-header{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:14px 16px;
+    border-bottom:1px solid var(--violet);
+  }
+  .chat-avatar{
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    background:var(--void);
+    border:1px solid var(--blood);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:18px;
+    flex-shrink:0;
+    transition:border-color .5s ease;
+  }
+  .chat-avatar.reveal{border-color:var(--rose);}
+  .chat-name{
+    font-family:'Jost',sans-serif;
+    font-size:14px;
+    font-weight:500;
+    color:var(--bone);
+  }
+  .chat-status{
+    font-size:11px;
+    color:var(--bone-dim);
+    letter-spacing:0.5px;
+  }
+  .chat-body{
+    padding:18px 16px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    min-height:180px;
+    max-height:360px;
+    overflow-y:auto;
+  }
+  .chat-bubble{
+    align-self:flex-start;
+    max-width:80%;
+    background:var(--void);
+    border:1px solid var(--violet);
+    color:var(--bone);
+    font-family:'Cormorant Garamond',serif;
+    font-size:16px;
+    line-height:1.5;
+    padding:10px 14px;
+    border-radius:2px 12px 12px 12px;
+    opacity:0;
+    transform:translateY(6px);
+    animation:bubble-in .4s ease forwards;
+  }
+  .chat-bubble.reveal{
+    border-color:var(--rose);
+    color:var(--rose);
+    font-style:italic;
+  }
+  @keyframes bubble-in{
+    to{opacity:1;transform:translateY(0);}
+  }
+  .chat-typing{
+    align-self:flex-start;
+    display:flex;
+    gap:4px;
+    background:var(--void);
+    border:1px solid var(--violet);
+    padding:12px 14px;
+    border-radius:2px 12px 12px 12px;
+  }
+  .chat-typing span{
+    width:6px;height:6px;border-radius:50%;
+    background:var(--bone-dim);
+    animation:typing-bounce 1.1s infinite ease-in-out;
+  }
+  .chat-typing span:nth-child(2){animation-delay:.15s;}
+  .chat-typing span:nth-child(3){animation-delay:.3s;}
+  @keyframes typing-bounce{
+    0%,60%,100%{transform:translateY(0);opacity:.5;}
+    30%{transform:translateY(-4px);opacity:1;}
+  }
+
+  .chat-next{
+    margin-top:24px;
+    background:transparent;
+    border:1px solid var(--blood);
+    color:var(--bone);
+    font-family:'Jost',sans-serif;
+    font-size:12px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    padding:12px 26px;
+    cursor:pointer;
+    transition:all .3s ease;
+  }
+  .chat-next:hover{background:var(--blood);}
+  .chat-next:disabled{opacity:0.35;cursor:default;background:transparent;}
+  .chat-next.reveal{border-color:var(--rose);}
+  .chat-next.reveal:hover{background:var(--rose);color:var(--void);}
+
   footer{
     text-align:center;
     padding:60px 24px 90px;
@@ -405,6 +533,30 @@
 
     </section>
 
+    <!--
+      ✎ Nota para editar la historia del chat: busca la constante "chatScript"
+      en el <script> de abajo. Cada línea es un mensaje; puedes cambiar el
+      texto, agregar más mensajes, o mover el punto donde cambia de
+      "Desconocido" a la revelación romántica.
+    -->
+    <section id="chat-terror">
+      <h2>alguien te está escribiendo</h2>
+      <p class="lead">toca el botón para leer el mensaje, uno a la vez. si te da miedo, puedes parar cuando quieras... o no.</p>
+
+      <div class="chat-wrap">
+        <div class="chat-header">
+          <div class="chat-avatar" id="chatAvatar">👻</div>
+          <div>
+            <div class="chat-name" id="chatName">Desconocido</div>
+            <div class="chat-status" id="chatStatus">en línea</div>
+          </div>
+        </div>
+        <div class="chat-body" id="chatBody"></div>
+      </div>
+
+      <button class="chat-next" id="chatNext">toca para leer ▾</button>
+    </section>
+
     <section id="surprise">
       <h2>¿lista para el susto final?</h2>
       <p>presiona el botón. no hay truco esta vez &mdash; solo un recordatorio de que te quiero, ahora mismo.</p>
@@ -499,6 +651,83 @@
     });
   }, { threshold: 0.15 });
   verses.forEach(function(v){ observer.observe(v); });
+
+  // ---------- CHAT DE TERROR INTERACTIVO ----------
+  // ✎ Edita este arreglo para cambiar la historia. "reveal: true" marca dónde
+  // empieza el giro romántico (cambia avatar/nombre/estado del contacto).
+  const chatScript = [
+    { text: 'hola.' },
+    { text: 'sé que estás leyendo esto justo ahora.' },
+    { text: 'llevo contando los días desde que te conocí. todos.' },
+    { text: 'no dejo de pensar en ti. ni un solo día se me escapa.' },
+    { text: '¿tienes miedo?' },
+    { text: 'deberías. porque no pienso irme a ningún lado.' },
+    { text: 'perdón, no pude evitar hacerte una broma 😅', reveal: true, name: 'tu persona', avatar: '❤️', status: 'pensando en ti' },
+    { text: 'la verdad es que sí cuento los días. cada uno contigo ha sido el mejor.' },
+    { text: 'y esa parte tampoco era mentira: no pienso irme a ningún lado.' },
+    { text: 'feliz aniversario, mi amor. 🕯️❤️' }
+  ];
+
+  const chatBody = document.getElementById('chatBody');
+  const chatNext = document.getElementById('chatNext');
+  const chatAvatar = document.getElementById('chatAvatar');
+  const chatName = document.getElementById('chatName');
+  const chatStatus = document.getElementById('chatStatus');
+
+  let chatIndex = 0;
+  let chatBusy = false;
+
+  function scrollChatToBottom(){
+    chatBody.scrollTop = chatBody.scrollHeight;
+  }
+
+  function showNextChatMessage(){
+    if(chatBusy) return;
+    if(chatIndex >= chatScript.length){
+      document.getElementById('surprise').scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+
+    chatBusy = true;
+    chatNext.disabled = true;
+
+    const typing = document.createElement('div');
+    typing.className = 'chat-typing';
+    typing.innerHTML = '<span></span><span></span><span></span>';
+    chatBody.appendChild(typing);
+    scrollChatToBottom();
+
+    const entry = chatScript[chatIndex];
+    const delay = 700 + Math.random() * 700;
+
+    setTimeout(function(){
+      typing.remove();
+
+      if(entry.reveal){
+        chatAvatar.textContent = entry.avatar;
+        chatAvatar.classList.add('reveal');
+        chatName.textContent = entry.name;
+        chatStatus.textContent = entry.status;
+      }
+
+      const bubble = document.createElement('div');
+      bubble.className = 'chat-bubble' + (entry.reveal ? ' reveal' : '');
+      bubble.textContent = entry.text;
+      chatBody.appendChild(bubble);
+      scrollChatToBottom();
+
+      chatIndex++;
+      chatBusy = false;
+      chatNext.disabled = false;
+
+      if(chatIndex >= chatScript.length){
+        chatNext.textContent = 'continuar ↓';
+        chatNext.classList.add('reveal');
+      }
+    }, delay);
+  }
+
+  chatNext.addEventListener('click', showNextChatMessage);
 
   // ---------- BOTÓN SORPRESA ----------
   const heartsLayer = document.getElementById('hearts-layer');

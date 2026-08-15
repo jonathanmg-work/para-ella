@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+<title>Hunter's Log</title>
+<meta name="theme-color" content="#060911" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Hunter's Log" />
+<link rel="apple-touch-icon" href="icons/icon-180.png" />
+<link rel="manifest" href="manifest.json" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="topbar">
+  <p class="topbar-title">Sistema · Registro del Cazador</p>
+  <p class="topbar-sub" id="greeting">Bienvenido, Cazador</p>
+</div>
+
+<!-- ================= VISTA: MISIONES ================= -->
+<div class="view active" id="view-quests">
+
+  <div class="balance-card">
+    <p class="balance-label">Horas de juego disponibles</p>
+    <p class="balance-value"><span id="balance-hours">0</span><span>hrs</span></p>
+    <div class="balance-actions">
+      <button class="btn btn-gold" id="btn-open-export">Extraer horas</button>
+      <button class="btn btn-ghost" id="btn-open-ai">✦ Generar con IA</button>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <h2>Misiones diarias</h2>
+    <span class="hint" id="quest-count"></span>
+  </div>
+  <div class="task-list" id="list-daily"></div>
+
+  <div class="section-header">
+    <h2>Misiones únicas</h2>
+  </div>
+  <div class="task-list" id="list-once"></div>
+
+  <div class="empty-state" id="empty-state" style="display:none;">
+    No tienes misiones todavía. Toca “+” para crear una, o pídele a la IA que te sugiera algunas.
+  </div>
+
+  <button class="fab" id="btn-add-task">+</button>
+</div>
+
+<!-- ================= VISTA: AJUSTES ================= -->
+<div class="view" id="view-settings">
+  <div class="section-header" style="margin-top:10px;">
+    <h2>Conexión con la IA (Gemini)</h2>
+  </div>
+  <div style="padding:0 16px;">
+    <div class="field">
+      <label>API Key de Gemini (gratuita)</label>
+      <input type="password" id="input-gemini-key" placeholder="AIza..." />
+      <p class="hint">Consíguela gratis en aistudio.google.com/apikey. Se guarda solo en este teléfono.</p>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-header" style="margin:0 0 10px; padding:0;"><h2>Clave de cifrado del Vale de Horas</h2></div>
+    <div class="field">
+      <label>Frase secreta (passphrase)</label>
+      <input type="password" id="input-passphrase" placeholder="Debe coincidir con la app de PC" />
+      <p class="hint">Esta misma frase la configurarás en la app de Windows (Game Guardian). Sin ella, el archivo exportado no se puede leer ni falsificar.</p>
+    </div>
+
+    <button class="btn btn-primary btn-block" id="btn-save-settings">Guardar ajustes</button>
+
+    <div class="divider"></div>
+
+    <div class="section-header" style="margin:0 0 10px; padding:0;"><h2>Historial de vales exportados</h2></div>
+    <div id="export-history"></div>
+  </div>
+</div>
+
+<div class="tabbar">
+  <button class="tab active" data-view="view-quests"><span class="tab-icon">⚔</span>Misiones</button>
+  <button class="tab" data-view="view-settings"><span class="tab-icon">⚙</span>Ajustes</button>
+</div>
+
+<!-- ================= MODAL: AGREGAR TAREA ================= -->
+<div class="overlay hidden" id="modal-add-task">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <h3>Nueva misión</h3>
+    <div class="field">
+      <label>Título</label>
+      <input type="text" id="task-title" placeholder="Ej. Hacer ejercicio 30 min" />
+    </div>
+    <div class="field">
+      <label>Descripción (opcional)</label>
+      <textarea id="task-desc" placeholder="Detalles de la misión"></textarea>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Categoría</label>
+        <select id="task-category">
+          <option>Estudio</option>
+          <option>Trabajo</option>
+          <option>Salud</option>
+          <option>Hogar</option>
+          <option selected>Personal</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Frecuencia</label>
+        <select id="task-recurring">
+          <option value="daily" selected>Diaria</option>
+          <option value="once">Única vez</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Recompensa (minutos de juego)</label>
+      <input type="number" id="task-reward" value="20" min="0" step="5" />
+    </div>
+    <div class="sheet-actions">
+      <button class="btn btn-ghost btn-block" id="btn-cancel-task">Cancelar</button>
+      <button class="btn btn-primary btn-block" id="btn-save-task">Crear misión</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= MODAL: IA ================= -->
+<div class="overlay hidden" id="modal-ai">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <h3>Generar misiones con IA</h3>
+    <div class="field">
+      <label>Describe lo que necesitas</label>
+      <textarea id="ai-prompt" placeholder="Ej. Tengo que estudiar para un examen de matemáticas, limpiar mi cuarto y hacer ejercicio esta semana"></textarea>
+    </div>
+    <button class="btn btn-primary btn-block" id="btn-ai-generate">Generar</button>
+    <p class="hint" id="ai-status"></p>
+    <div id="ai-results" style="margin-top:14px;"></div>
+  </div>
+</div>
+
+<!-- ================= MODAL: EXPORTAR HORAS ================= -->
+<div class="overlay hidden" id="modal-export">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <h3>Extraer vale de horas</h3>
+    <p class="hint">Disponibles: <strong id="export-available">0</strong> horas</p>
+    <div class="field">
+      <label>Horas a extraer</label>
+      <input type="number" id="export-amount" min="0.1" step="0.25" value="1" />
+    </div>
+    <button class="btn btn-gold btn-block" id="btn-do-export">Generar archivo .hunter</button>
+    <p class="hint">El archivo se descargará cifrado. Envíatelo por WhatsApp, pásalo a tu USB y cárgalo en Game Guardian en tu PC.</p>
+    <div class="sheet-actions">
+      <button class="btn btn-ghost btn-block" id="btn-cancel-export">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast de misión completada -->
+<div class="quest-toast" id="quest-toast">
+  <div class="qt-title">Misión completada</div>
+  <div class="qt-msg" id="qt-msg"></div>
+  <div class="qt-reward" id="qt-reward"></div>
+</div>
+
+<script src="js/store.js"></script>
+<script src="js/crypto.js"></script>
+<script src="js/ai.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

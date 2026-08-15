@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>no cierres esta pestaña.</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9D%A4%EF%B8%8F%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Eater&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Parisienne&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
@@ -30,6 +31,88 @@
     font-family:'Jost',sans-serif;
     overflow-x:hidden;
     min-height:100vh;
+  }
+
+  /* ---------- SOBRE / CARTA CERRADA ---------- */
+  #envelope-screen{
+    position:fixed;
+    inset:0;
+    background:var(--void);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    z-index:110;
+    text-align:center;
+    padding:24px;
+    transition:opacity .8s ease, visibility .8s ease;
+  }
+  #envelope-screen.hidden{opacity:0;visibility:hidden;pointer-events:none;}
+
+  .envelope-scene{
+    perspective:900px;
+    cursor:pointer;
+  }
+  .envelope{
+    position:relative;
+    width:220px;
+    height:150px;
+  }
+  .envelope-back{
+    position:absolute;
+    inset:0;
+    background:var(--void-2);
+    border:1px solid var(--gold);
+    border-radius:4px;
+  }
+  .envelope-flap{
+    position:absolute;
+    top:0;left:0;right:0;
+    height:75px;
+    background:linear-gradient(135deg, var(--blood), var(--blood-bright));
+    clip-path:polygon(0 0, 100% 0, 50% 100%);
+    transform-origin:top center;
+    transition:transform .9s cubic-bezier(.6,-0.28,.74,.05);
+    z-index:3;
+  }
+  .envelope-scene.open .envelope-flap{transform:rotateX(180deg);}
+
+  .envelope-letter{
+    position:absolute;
+    left:10px;right:10px;
+    bottom:8px;
+    height:0;
+    background:var(--bone);
+    border-radius:2px;
+    overflow:hidden;
+    z-index:1;
+    transition:height .6s ease .5s, bottom .6s ease .5s;
+  }
+  .envelope-scene.open .envelope-letter{height:120px;bottom:60px;}
+
+  .envelope-seal{
+    position:absolute;
+    top:64px;left:50%;
+    transform:translate(-50%,-50%);
+    width:34px;height:34px;
+    border-radius:50%;
+    background:var(--blood);
+    border:1px solid var(--gold);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:14px;
+    z-index:4;
+    transition:opacity .3s ease, transform .3s ease;
+  }
+  .envelope-scene.open .envelope-seal{opacity:0;transform:translate(-50%,-50%) scale(0.4);}
+
+  .envelope-sub{
+    margin-top:36px;
+    font-size:13px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:var(--bone-dim);
   }
 
   /* ---------- INTRO ---------- */
@@ -436,6 +519,197 @@
   .chat-next.reveal{border-color:var(--rose);}
   .chat-next.reveal:hover{background:var(--rose);color:var(--void);}
 
+  /* TIMELINE */
+  #timeline h2{
+    text-align:center;
+    font-family:'Cormorant Garamond',serif;
+    font-weight:500;
+    font-size:clamp(26px,4vw,34px);
+    margin-bottom:56px;
+  }
+  .tl-list{
+    position:relative;
+    padding-left:28px;
+    border-left:1px solid var(--violet);
+  }
+  .tl-item{
+    position:relative;
+    margin-bottom:44px;
+    opacity:0;
+    transform:translateY(14px);
+    transition:opacity .8s ease, transform .8s ease;
+  }
+  .tl-item.in-view{opacity:1;transform:translateY(0);}
+  .tl-item::before{
+    content:"";
+    position:absolute;
+    left:-33px;top:4px;
+    width:9px;height:9px;
+    border-radius:50%;
+    background:var(--gold);
+    box-shadow:0 0 0 3px var(--void);
+  }
+  .tl-date{
+    font-size:12px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:var(--gold);
+    margin-bottom:6px;
+  }
+  .tl-title{
+    font-family:'Cormorant Garamond',serif;
+    font-size:22px;
+    margin-bottom:6px;
+  }
+  .tl-desc{
+    color:var(--bone-dim);
+    font-size:15px;
+    line-height:1.6;
+    max-width:460px;
+  }
+
+  /* GALLERY */
+  #gallery h2{
+    text-align:center;
+    font-family:'Cormorant Garamond',serif;
+    font-weight:500;
+    font-size:clamp(26px,4vw,34px);
+    margin-bottom:12px;
+  }
+  #gallery .lead{
+    text-align:center;
+    color:var(--bone-dim);
+    max-width:420px;
+    margin:0 auto 48px;
+    line-height:1.7;
+    font-size:15px;
+  }
+  .polaroid-grid{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:28px 22px;
+  }
+  .polaroid{
+    background:var(--bone);
+    padding:12px 12px 20px;
+    box-shadow:0 12px 24px rgba(0,0,0,0.45);
+    opacity:0;
+    transform:translateY(18px) rotate(var(--rot,0deg));
+    transition:opacity .8s ease, transform .8s ease;
+  }
+  .polaroid.in-view{opacity:1;transform:rotate(var(--rot,0deg));}
+  .polaroid:nth-child(1){--rot:-4deg;}
+  .polaroid:nth-child(2){--rot:3deg;margin-top:22px;}
+  .polaroid:nth-child(3){--rot:2deg;}
+  .polaroid:nth-child(4){--rot:-3deg;margin-top:22px;}
+  .polaroid img{
+    width:100%;
+    aspect-ratio:1/1;
+    object-fit:cover;
+    background:var(--void-2);
+    display:block;
+  }
+  .polaroid-placeholder{
+    width:100%;
+    aspect-ratio:1/1;
+    background:var(--void-2);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--bone-dim);
+    font-size:28px;
+  }
+  .polaroid-caption{
+    margin-top:10px;
+    text-align:center;
+    font-family:'Parisienne',cursive;
+    font-size:16px;
+    color:#2a2420;
+  }
+
+  /* QUIZ */
+  #quiz{text-align:center;}
+  #quiz h2{
+    font-family:'Cormorant Garamond',serif;
+    font-weight:500;
+    font-size:clamp(26px,4vw,34px);
+    margin-bottom:12px;
+  }
+  #quiz .lead{
+    color:var(--bone-dim);
+    max-width:420px;
+    margin:0 auto 36px;
+    line-height:1.7;
+    font-size:15px;
+  }
+  .quiz-wrap{
+    background:var(--void-2);
+    border:1px solid var(--violet);
+    border-radius:6px;
+    max-width:440px;
+    margin:0 auto;
+    padding:28px 24px;
+    text-align:left;
+  }
+  .quiz-progress{
+    font-size:12px;
+    letter-spacing:1px;
+    color:var(--gold);
+    text-transform:uppercase;
+    margin-bottom:16px;
+  }
+  .quiz-question{
+    font-family:'Cormorant Garamond',serif;
+    font-size:21px;
+    margin-bottom:20px;
+    line-height:1.4;
+  }
+  .quiz-options{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .quiz-option{
+    background:transparent;
+    border:1px solid var(--violet);
+    color:var(--bone);
+    font-family:'Jost',sans-serif;
+    font-size:14px;
+    text-align:left;
+    padding:12px 16px;
+    cursor:pointer;
+    border-radius:3px;
+    transition:border-color .25s ease, background .25s ease;
+  }
+  .quiz-option:hover{border-color:var(--gold);}
+  .quiz-option.correct{border-color:var(--rose);background:rgba(246,201,212,0.08);color:var(--rose);}
+  .quiz-option.wrong{border-color:var(--blood-bright);animation:shake .4s ease;}
+  @keyframes shake{
+    0%,100%{transform:translateX(0);}
+    25%{transform:translateX(-6px);}
+    75%{transform:translateX(6px);}
+  }
+  .quiz-feedback{
+    margin-top:14px;
+    font-size:13px;
+    color:var(--bone-dim);
+    min-height:18px;
+  }
+  .quiz-unlock{
+    display:none;
+    text-align:center;
+    padding:20px 6px 4px;
+  }
+  .quiz-unlock.show{display:block;}
+  .quiz-unlock .lock-icon{font-size:30px;margin-bottom:14px;}
+  .quiz-unlock p{
+    font-family:'Cormorant Garamond',serif;
+    font-style:italic;
+    font-size:19px;
+    color:var(--rose);
+    line-height:1.7;
+  }
+
   footer{
     text-align:center;
     padding:60px 24px 90px;
@@ -471,6 +745,29 @@
     0%,100%{box-shadow:0 0 0 rgba(122,31,43,0);}
     50%{box-shadow:0 0 14px rgba(122,31,43,0.55);}
   }
+  .music-caption{
+    position:fixed;
+    top:70px;
+    right:20px;
+    z-index:80;
+    font-size:11px;
+    color:var(--bone-dim);
+    letter-spacing:0.5px;
+    max-width:150px;
+    text-align:right;
+    opacity:0;
+    transition:opacity .6s ease;
+  }
+  .music-caption.show{opacity:1;}
+
+  /* VISITAS */
+  .visit-note{
+    margin-top:18px;
+    font-size:12px;
+    color:var(--bone-dim);
+    letter-spacing:0.5px;
+    opacity:0.85;
+  }
 
   @media (prefers-reduced-motion: reduce){
     *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}
@@ -482,6 +779,18 @@
 </style>
 </head>
 <body>
+
+  <div id="envelope-screen">
+    <div class="envelope-scene" id="envelopeScene">
+      <div class="envelope">
+        <div class="envelope-letter"></div>
+        <div class="envelope-back"></div>
+        <div class="envelope-flap"></div>
+        <div class="envelope-seal">❤</div>
+      </div>
+    </div>
+    <div class="envelope-sub">toca el sobre para abrirlo</div>
+  </div>
 
   <div id="intro-screen">
     <div class="static-noise"></div>
@@ -496,6 +805,7 @@
       <div class="eyebrow">aniversario</div>
       <h1>esto empieza como un miedo<br>y termina siendo un <span class="script">amor</span></h1>
       <p>sigue bajando. lo prometo: nada de esto muerde. (bueno... casi nada).</p>
+      <div class="visit-note" id="visitNote"></div>
     </section>
 
     <section id="counter">
@@ -505,6 +815,43 @@
         <span class="lang-jp">一緒にいる日</span>
       </div>
       <div class="count-since">juntos desde el 30 de agosto de 2025</div>
+    </section>
+
+    <!--
+      ✎ Nota para editar la línea de tiempo: busca la constante "timelineEvents"
+      en el <script> de abajo y cambia fechas, títulos y descripciones.
+    -->
+    <section id="timeline">
+      <h2>cómo llegamos hasta aquí</h2>
+      <div class="tl-list" id="tlList"></div>
+    </section>
+
+    <!--
+      ✎ Nota para editar la galería: reemplaza los src="foto1.jpg" etc. por los
+      nombres de tus propias fotos, y súbelas en la misma carpeta que este
+      index.html. Cambia también los textos de .polaroid-caption.
+    -->
+    <section id="gallery">
+      <h2>algunos momentos</h2>
+      <p class="lead">reemplaza estas fotos por las nuestras — instrucciones en el código.</p>
+      <div class="polaroid-grid">
+        <div class="polaroid">
+          <div class="polaroid-placeholder">📷</div>
+          <div class="polaroid-caption">foto 1</div>
+        </div>
+        <div class="polaroid">
+          <div class="polaroid-placeholder">📷</div>
+          <div class="polaroid-caption">foto 2</div>
+        </div>
+        <div class="polaroid">
+          <div class="polaroid-placeholder">📷</div>
+          <div class="polaroid-caption">foto 3</div>
+        </div>
+        <div class="polaroid">
+          <div class="polaroid-placeholder">📷</div>
+          <div class="polaroid-caption">foto 4</div>
+        </div>
+      </div>
     </section>
 
     <section id="poem">
@@ -557,6 +904,29 @@
       <button class="chat-next" id="chatNext">toca para leer ▾</button>
     </section>
 
+    <!--
+      ✎ Nota para editar el quiz: busca la constante "quizQuestions" en el
+      <script> de abajo. Cada pregunta tiene "options" y el índice de la
+      respuesta correcta en "correct" (0 = primera opción, 1 = segunda...).
+      El mensaje final desbloqueado está en "quizUnlockMessage".
+    -->
+    <section id="quiz">
+      <h2>¿me conoces tan bien como yo a ti?</h2>
+      <p class="lead">responde bien las 3 preguntas y desbloqueas algo especial.</p>
+      <div class="quiz-wrap">
+        <div id="quizActive">
+          <div class="quiz-progress" id="quizProgress">pregunta 1 de 3</div>
+          <div class="quiz-question" id="quizQuestion"></div>
+          <div class="quiz-options" id="quizOptions"></div>
+          <div class="quiz-feedback" id="quizFeedback"></div>
+        </div>
+        <div class="quiz-unlock" id="quizUnlock">
+          <div class="lock-icon">🔓</div>
+          <p id="quizUnlockText"></p>
+        </div>
+      </div>
+    </section>
+
     <section id="surprise">
       <h2>¿lista para el susto final?</h2>
       <p>presiona el botón. no hay truco esta vez &mdash; solo un recordatorio de que te quiero, ahora mismo.</p>
@@ -583,8 +953,22 @@
     <source src="musica.mp3" type="audio/mpeg">
   </audio>
   <button id="musicToggle" aria-label="Reproducir o pausar música" title="Música">🔈</button>
+  <!-- ✎ Cambia este texto por el nombre real de la canción y el artista -->
+  <div class="music-caption" id="musicCaption">🎵 nombre de la canción — artista</div>
 
 <script>
+  // ---------- SOBRE / CARTA CERRADA ----------
+  const envelopeScreen = document.getElementById('envelope-screen');
+  const envelopeScene = document.getElementById('envelopeScene');
+  const musicCaption = document.getElementById('musicCaption');
+
+  envelopeScene.addEventListener('click', function(){
+    envelopeScene.classList.add('open');
+    setTimeout(function(){
+      envelopeScreen.classList.add('hidden');
+    }, 1500);
+  });
+
   // ---------- INTRO ----------
   const bgMusic = document.getElementById('bgMusic');
   const musicToggle = document.getElementById('musicToggle');
@@ -596,6 +980,7 @@
     bgMusic.play().then(function(){
       musicToggle.textContent = '🔊';
       musicToggle.classList.add('playing');
+      musicCaption.classList.add('show');
     }).catch(function(){
       // si el navegador igual bloquea el autoplay, el botón de música sigue disponible para iniciarla manualmente
       musicToggle.textContent = '🔈';
@@ -607,12 +992,30 @@
       bgMusic.play();
       musicToggle.textContent = '🔊';
       musicToggle.classList.add('playing');
+      musicCaption.classList.add('show');
     } else {
       bgMusic.pause();
       musicToggle.textContent = '🔈';
       musicToggle.classList.remove('playing');
+      musicCaption.classList.remove('show');
     }
   });
+
+  // ---------- CONTADOR DE VISITAS ----------
+  (function(){
+    const STORAGE_KEY = 'aniversario_visitas';
+    let visits = parseInt(localStorage.getItem(STORAGE_KEY) || '0', 10) + 1;
+    localStorage.setItem(STORAGE_KEY, visits);
+
+    const note = document.getElementById('visitNote');
+    if(visits <= 1){
+      note.textContent = '';
+    } else if(visits % 5 === 0){
+      note.textContent = 'has vuelto a leer esto ' + visits + ' veces 🥹 y yo lo escribiría otras mil.';
+    } else {
+      note.textContent = 'has abierto esto ' + visits + ' veces.';
+    }
+  })();
 
   // ---------- CONTADOR DE DÍAS ----------
   const startDate = new Date(2025, 7, 30); // 30 agosto 2025 (mes 7 = agosto, base 0)
@@ -641,8 +1044,28 @@
     showingKr = !showingKr;
   }, 3200);
 
+  // ---------- LÍNEA DE TIEMPO ----------
+  // ✎ Edita este arreglo con los momentos importantes de su relación
+  const timelineEvents = [
+    { date: '30 ago 2025', title: 'el día que empezamos', desc: 'el día que decidimos contar los días juntos, literalmente.' },
+    { date: 'editar fecha', title: 'nuestra primera cita', desc: 'reemplaza esto con el recuerdo real de ese día.' },
+    { date: 'editar fecha', title: 'un viaje / momento especial', desc: 'cuenta aquí qué pasó y por qué importó.' },
+    { date: 'hoy', title: 'este regalo', desc: 'y seguimos sumando días.' }
+  ];
+
+  const tlList = document.getElementById('tlList');
+  timelineEvents.forEach(function(ev){
+    const item = document.createElement('div');
+    item.className = 'tl-item';
+    item.innerHTML =
+      '<div class="tl-date">' + ev.date + '</div>' +
+      '<div class="tl-title">' + ev.title + '</div>' +
+      '<div class="tl-desc">' + ev.desc + '</div>';
+    tlList.appendChild(item);
+  });
+
   // ---------- REVEAL AL HACER SCROLL ----------
-  const verses = document.querySelectorAll('.verse');
+  const revealItems = document.querySelectorAll('.verse, .tl-item, .polaroid');
   const observer = new IntersectionObserver(function(entries){
     entries.forEach(function(entry){
       if(entry.isIntersecting){
@@ -650,7 +1073,7 @@
       }
     });
   }, { threshold: 0.15 });
-  verses.forEach(function(v){ observer.observe(v); });
+  revealItems.forEach(function(v){ observer.observe(v); });
 
   // ---------- CHAT DE TERROR INTERACTIVO ----------
   // ✎ Edita este arreglo para cambiar la historia. "reveal: true" marca dónde
@@ -728,6 +1151,78 @@
   }
 
   chatNext.addEventListener('click', showNextChatMessage);
+
+  // ---------- QUIZ DE PAREJA ----------
+  // ✎ Edita las preguntas, opciones y el índice de la respuesta correcta (0 = primera opción)
+  const quizQuestions = [
+    {
+      question: '¿cuál fue el lugar de nuestra primera cita?',
+      options: ['editar opción 1', 'editar opción 2', 'editar opción 3'],
+      correct: 0
+    },
+    {
+      question: '¿cuál es mi comida favorita?',
+      options: ['editar opción 1', 'editar opción 2', 'editar opción 3'],
+      correct: 0
+    },
+    {
+      question: '¿qué fecha empezamos a salir?',
+      options: ['30 de agosto', '15 de julio', '2 de septiembre'],
+      correct: 0
+    }
+  ];
+  const quizUnlockMessage = 'esto era lo que había del otro lado: la prueba de que te conozco tanto como te quiero. feliz aniversario. 🔓❤️';
+
+  let quizIndex = 0;
+  const quizQuestionEl = document.getElementById('quizQuestion');
+  const quizOptionsEl = document.getElementById('quizOptions');
+  const quizProgressEl = document.getElementById('quizProgress');
+  const quizFeedbackEl = document.getElementById('quizFeedback');
+  const quizActiveEl = document.getElementById('quizActive');
+  const quizUnlockEl = document.getElementById('quizUnlock');
+  const quizUnlockTextEl = document.getElementById('quizUnlockText');
+
+  function renderQuizQuestion(){
+    const q = quizQuestions[quizIndex];
+    quizProgressEl.textContent = 'pregunta ' + (quizIndex + 1) + ' de ' + quizQuestions.length;
+    quizQuestionEl.textContent = q.question;
+    quizFeedbackEl.textContent = '';
+    quizOptionsEl.innerHTML = '';
+
+    q.options.forEach(function(opt, i){
+      const btn = document.createElement('button');
+      btn.className = 'quiz-option';
+      btn.textContent = opt;
+      btn.addEventListener('click', function(){ handleQuizAnswer(i, btn); });
+      quizOptionsEl.appendChild(btn);
+    });
+  }
+
+  function handleQuizAnswer(i, btn){
+    const q = quizQuestions[quizIndex];
+    if(i === q.correct){
+      btn.classList.add('correct');
+      quizFeedbackEl.textContent = '¡exacto! 💛';
+      Array.from(quizOptionsEl.children).forEach(function(b){ b.disabled = true; });
+
+      setTimeout(function(){
+        quizIndex++;
+        if(quizIndex < quizQuestions.length){
+          renderQuizQuestion();
+        } else {
+          quizActiveEl.style.display = 'none';
+          quizUnlockTextEl.textContent = quizUnlockMessage;
+          quizUnlockEl.classList.add('show');
+        }
+      }, 900);
+    } else {
+      btn.classList.add('wrong');
+      quizFeedbackEl.textContent = 'casi... inténtalo de nuevo.';
+      setTimeout(function(){ btn.classList.remove('wrong'); }, 400);
+    }
+  }
+
+  renderQuizQuestion();
 
   // ---------- BOTÓN SORPRESA ----------
   const heartsLayer = document.getElementById('hearts-layer');
